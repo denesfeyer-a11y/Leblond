@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Londres · 22-24 juillet 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{
+    --ink:#1c1a2e;
+    --paper:#faf6ee;
+    --paper-2:#f2ecdd;
+    --card:#ffffff;
+    --navy:#22304a;
+    --teal:#1f7a70;
+    --coral:#e2694b;
+    --gold:#d9a441;
+    --mauve:#8a5a7a;
+    --line:#e7dfcb;
+    --shadow: 0 10px 30px -12px rgba(28,26,46,0.18);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',serif; margin:0 0 .3em; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:70px 24px 120px;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(226,105,75,0.35), transparent 45%),
+      radial-gradient(circle at 85% 0%, rgba(217,164,65,0.3), transparent 40%),
+      linear-gradient(160deg,#22304a 0%,#1c1a2e 55%,#2b1f36 100%);
+    color:#fdf9ef;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:auto 0 0 0; height:90px;
+    background:var(--paper);
+    clip-path: polygon(0 100%, 100% 100%, 100% 40%, 92% 55%, 84% 35%, 76% 60%, 68% 30%, 60% 58%, 52% 32%, 44% 55%, 36% 28%, 28% 60%, 20% 34%, 12% 58%, 4% 30%, 0 50%);
+  }
+  .hero-inner{max-width:1040px;margin:0 auto;position:relative;z-index:2;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.22);
+    padding:7px 14px;border-radius:999px;margin-bottom:22px;color:#f3e6c8;
+  }
+  .hero h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:700;color:#fff;}
+  .hero p.lead{max-width:560px;font-size:1.08rem;color:#e6e0f0;margin-top:10px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;}
+  .pill{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:14px;padding:12px 18px;min-width:140px;
+    backdrop-filter:blur(6px);
+  }
+  .pill .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:#c9c2df;}
+  .pill .v{font-size:1.05rem;font-weight:600;color:#fff;margin-top:2px;}
+
+  .countdown{
+    margin-top:36px;display:flex;gap:14px;flex-wrap:wrap;
+  }
+  .cd-box{
+    background:linear-gradient(155deg, rgba(217,164,65,0.95), rgba(226,105,75,0.9));
+    color:#241a12;border-radius:16px;padding:14px 18px;min-width:82px;text-align:center;
+    box-shadow: 0 12px 24px -10px rgba(226,105,75,0.55);
+  }
+  .cd-box .num{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:700;display:block;}
+  .cd-box .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(250,246,238,0.9);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1040px;margin:0 auto;padding:12px 24px;
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+  }
+  .nav-inner::-webkit-scrollbar{display:none;}
+  nav a{
+    white-space:nowrap;font-size:.86rem;font-weight:600;
+    padding:8px 14px;border-radius:999px;color:var(--navy);
+    text-decoration:none;transition:.2s;
+  }
+  nav a:hover{background:var(--paper-2);}
+
+  section{max-width:1040px;margin:0 auto;padding:64px 24px;}
+  .section-head{margin-bottom:34px;}
+  .section-head .tag{
+    font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--teal);font-weight:700;
+  }
+  .section-head h2{font-size:clamp(1.7rem,4vw,2.4rem);}
+  .section-head p{color:#5a5568;max-width:640px;margin-top:6px;}
+
+  /* ---------- DAY TABS ---------- */
+  .day-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;}
+  .day-tab-btn{
+    border:2px solid var(--line); background:var(--card); cursor:pointer;
+    padding:12px 20px;border-radius:14px;font-family:'Inter';font-weight:600;
+    font-size:.92rem;color:var(--navy);transition:.2s;
+    display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  }
+  .day-tab-btn:not(.active):hover{border-color:var(--coral);transform:translateY(-1px);}
+  .day-tab-btn .d-sub{font-size:.74rem;font-weight:600;color:#8a8496;text-transform:none;letter-spacing:0;}
+  .day-tab-btn.active{
+    background:var(--navy);color:#fff;border-color:var(--navy);
+    box-shadow:var(--shadow);
+  }
+  .day-tab-btn.active .d-sub{color:#c9c2df;}
+  .day-panel{display:none;}
+  .day-panel.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .day-summary{
+    display:flex; gap:18px; flex-wrap:wrap; margin-bottom:26px;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 22px; box-shadow:var(--shadow);
+  }
+  .day-summary div{flex:1;min-width:150px;}
+  .day-summary .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#8a8496;}
+  .day-summary .v{font-weight:600;color:var(--navy);}
+
+  .timeline{position:relative;padding-left:28px;}
+  .timeline::before{
+    content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--teal),var(--coral));
+  }
+  .tl-item{position:relative;margin-bottom:26px;}
+  .tl-item::before{
+    content:"";position:absolute;left:-28px;top:4px;width:14px;height:14px;
+    border-radius:50%;background:var(--card);border:3px solid var(--coral);
+  }
+  .tl-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 22px;box-shadow:var(--shadow);
+  }
+  .tl-time{font-weight:700;color:var(--coral);font-size:.85rem;letter-spacing:.03em;}
+  .tl-card h4{font-size:1.15rem;margin:.2em 0 .35em;}
+  .tl-card p{margin:0;color:#4c4760;font-size:.95rem;}
+  .tl-transit{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
+    font-size:.82rem;color:#5a5568;
+  }
+  .tl-transit .tube{font-weight:600;color:var(--navy);}
+  .map-link{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:.78rem;font-weight:700;color:var(--teal);text-decoration:none;
+    white-space:nowrap;
+  }
+  .map-link:hover{text-decoration:underline;}
+  .tl-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;}
+  .tag-chip{
+    font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    padding:4px 10px;border-radius:999px;color:#fff;
+  }
+  .tag-music{background:var(--mauve);}
+  .tag-food{background:var(--coral);}
+  .tag-photo{background:var(--navy);}
+  .tag-expo{background:var(--teal);}
+  .tag-parc{background:#4f8a4a;}
+  .tag-transport{background:#8a8496;}
+
+  .concert-highlight{
+    background:linear-gradient(135deg,#22304a,#3a2440);
+    color:#fff;border-radius:20px;padding:28px 30px;margin:20px 0 30px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .concert-highlight::before{
+    content:"♪";position:absolute;right:18px;top:-10px;font-size:9rem;color:rgba(255,255,255,0.06);
+    font-family:'Fraunces';
+  }
+  .concert-highlight h3{color:#fff;font-size:1.5rem;}
+  .concert-highlight .cta-row{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px;}
+  .concert-highlight .cta-row div{min-width:120px;}
+  .concert-highlight .k{font-size:.68rem;text-transform:uppercase;color:#c9c2df;letter-spacing:.08em;}
+  .concert-highlight .v{font-weight:700;}
+
+  /* ---------- CALLOUT ---------- */
+  .callout{
+    border-radius:var(--radius); padding:22px 24px; margin:26px 0;
+    border:1px solid; display:flex; gap:16px;
+  }
+  .callout .icon{font-size:1.5rem;}
+  .callout h4{margin:0 0 6px;}
+  .callout p{margin:0 0 8px;color:#4c4760;font-size:.94rem;}
+  .callout.warn{background:#fdf2e9;border-color:#eecfa4;}
+  .callout.info{background:#eaf3ef;border-color:#bcdcd0;}
+
+  /* ---------- BONUS / FILTER ---------- */
+  .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+  .filter-btn{
+    border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:999px;
+    cursor:pointer;font-weight:600;font-size:.85rem;color:var(--navy);transition:.2s;
+  }
+  .filter-btn.active{color:#fff;border-color:transparent;}
+  .filter-btn[data-filter="all"].active{background:var(--ink);}
+  .filter-btn[data-filter="music"].active{background:var(--mauve);}
+  .filter-btn[data-filter="food"].active{background:var(--coral);}
+  .filter-btn[data-filter="photo"].active{background:var(--navy);}
+  .filter-btn[data-filter="expo"].active{background:var(--teal);}
+  .filter-btn[data-filter="parc"].active{background:#4f8a4a;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;box-shadow:var(--shadow);transition:.25s; display:flex;flex-direction:column;gap:8px;
+  }
+  .card:hover{transform:translateY(-4px);}
+  .card h4{font-size:1.05rem;margin:0;}
+  .card p{margin:0;color:#4c4760;font-size:.9rem;flex:1;}
+  .card .place{font-size:.78rem;color:#8a8496;font-weight:600;}
+  .card .transit{font-size:.8rem;color:#5a5568;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px;}
+  .card .transit .tube{font-weight:600;color:var(--navy);}
+  .card .map-link{margin-top:2px;}
+
+  /* ---------- MAP ---------- */
+  #map{height:460px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.82rem;color:#4c4760;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+
+  /* ---------- PRACTICAL INFO ---------- */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;}
+  .info-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+  .info-card h4{font-size:1rem;display:flex;align-items:center;gap:8px;}
+  .info-card p{font-size:.88rem;color:#4c4760;margin:.4em 0 0;}
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+  .checklist ul{list-style:none;margin:0;padding:0;columns:2;column-gap:24px;}
+  .checklist li{break-inside:avoid;margin-bottom:10px;}
+  .checklist label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:.92rem;}
+  .checklist input{margin-top:3px;accent-color:var(--teal);}
+  .checklist input:checked + span{text-decoration:line-through;color:#a19cae;}
+  .progress-wrap{margin-top:14px;background:var(--paper-2);border-radius:999px;height:8px;overflow:hidden;}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:.3s;}
+  .progress-label{font-size:.78rem;color:#8a8496;margin-top:6px;}
+
+  footer{
+    text-align:center;padding:50px 24px 70px;color:#8a8496;font-size:.85rem;
+  }
+  footer a{color:var(--teal);text-decoration:none;font-weight:600;}
+
+  @media(max-width:640px){
+    .checklist ul{columns:1;}
+    .hero{padding:56px 18px 100px;}
+    nav a{padding:10px 14px;font-size:.88rem;}
+    .checklist label{padding:4px 0;}
+    .checklist input{width:18px;height:18px;}
+    .cd-box{min-width:74px;padding:12px 14px;}
+    section{padding:48px 18px;}
+    .concert-highlight{padding:24px 20px;}
+    #map{height:340px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">✈ Marseille → Londres · James Taylor at The O2</div>
+    <h1>Notre escapade<br>londonienne</h1>
+    <p class="lead">Trois jours à Londres pour un concert de légende, entre bons petits plats, jardins secrets, expositions du moment et repérages photo pour toi 📷.</p>
+
+    <div class="hero-meta">
+      <div class="pill"><div class="k">Dates</div><div class="v">22 → 24 juillet 2026</div></div>
+      <div class="pill"><div class="k">Aller</div><div class="v">MRS → STN, 9h10</div></div>
+      <div class="pill"><div class="k">Retour</div><div class="v">STN → MRS, 7h30</div></div>
+      <div class="pill"><div class="k">Concert</div><div class="v">James Taylor · The O2</div></div>
+    </div>
+
+    <div class="countdown" id="countdown">
+      <div class="cd-box"><span class="num" id="cd-days">–</span><span class="lbl">jours</span></div>
+      <div class="cd-box"><span class="num" id="cd-hours">–</span><span class="lbl">heures</span></div>
+      <div class="cd-box"><span class="num" id="cd-mins">–</span><span class="lbl">min</span></div>
+      <div class="cd-box"><span class="num" id="cd-secs">–</span><span class="lbl">sec</span></div>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#itineraire">Itinéraire</a>
+    <a href="#concert">Concert</a>
+    <a href="#carte">Carte</a>
+    <a href="#bonus">Idées bonus</a>
+    <a href="#pratique">Infos pratiques</a>
+    <a href="#checklist">Checklist</a>
+  </div>
+</nav>
+
+<!-- ============ ITINERAIRE ============ -->
+<section id="itineraire">
+  <div class="section-head">
+    <div class="tag">Jour par jour</div>
+    <h2>L'itinéraire</h2>
+    <p>Un fil conducteur pensé pour votre rythme : arrivée tranquille le mercredi, grande journée musée + concert le jeudi, retour aux aurores le vendredi. <strong>Cliquez sur chaque jour ci-dessous</strong> pour dérouler le programme heure par heure — les 3 jours sont bien détaillés, y compris toute la journée du jeudi avant le concert du soir.</p>
+  </div>
+
+  <div class="day-tabs">
+    <button class="day-tab-btn active" data-day="1"><span class="d-label">Mer. 22 juillet</span><span class="d-sub">Arrivée · 7 étapes</span></button>
+    <button class="day-tab-btn" data-day="2"><span class="d-label">Jeu. 23 juillet 🎸</span><span class="d-sub">Journée + concert · 6 étapes</span></button>
+    <button class="day-tab-btn" data-day="3"><span class="d-label">Ven. 24 juillet</span><span class="d-sub">Retour · 3 étapes</span></button>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="day-panel active" id="day-1">
+    <div class="day-summary">
+      <div><div class="k">Météo probable</div><div class="v">~19-22°C, éclaircies</div></div>
+      <div><div class="k">Rythme</div><div class="v">Tranquille, jetlag nul</div></div>
+      <div><div class="k">Thème du jour</div><div class="v">Couleurs & jardins cachés</div></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">9h10</div>
+        <h4>Décollage de Marseille</h4>
+        <p>Vol Ryanair MRS → STN. Le Royaume-Uni a 1h de moins que la France en été (BST) : atterrissage prévu en toute fin de matinée, heure locale. Vérifiez l'horaire exact la veille sur l'appli Ryanair.</p>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">~11h</div>
+        <h4>Stansted Express jusqu'à Liverpool Street</h4>
+        <p>Trains toutes les 15 min, trajet ~48 min, à partir de £9,90 en réservant en ligne à l'avance (moins cher qu'au guichet). Alternative low-cost : bus National Express (~1h15, moins cher mais plus long).</p>
+        <div class="tl-transit"><span class="tube">🚉 Liverpool Street</span> — Central, Circle, Hammersmith & City, Metropolitan <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5178,-0.0823" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Déjeuner</div>
+        <h4>Spitalfields Market</h4>
+        <p>À 5 min à pied de Liverpool Street : marché couvert historique, étals gourmands du monde entier, boutiques déco et vintage. Parfait pour un premier déjeuner sans stress après le vol.</p>
+        <div class="tl-transit"><span class="tube">🚇 Liverpool Street</span> — Central/Circle/H&C/Metropolitan, 5 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5194,-0.0759" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-food">Food</span><span class="tag-chip tag-photo">Photo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Early afternoon</div>
+        <h4>Check-in — Pembridge Palace Hotel</h4>
+        <p>55 Princes Square, Notting Hill W2. Traversée pratique en métro (Central/Circle/District line jusqu'à Notting Hill Gate ou Bayswater, ~30 min depuis Liverpool Street). L'hôtel est idéalement placé : à deux pas de Portobello Road et du Kyoto Garden du programme de l'après-midi.</p>
+        <div class="tl-transit"><span class="tube">🚇 Bayswater ou Notting Hill Gate</span> — Circle/District (Bayswater) ou Central/Circle/District (Notting Hill Gate), 4-6 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5115,-0.1911" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Après-midi</div>
+        <h4>Notting Hill & Portobello Road</h4>
+        <p>Façades pastel de Lancaster Road, boutiques d'antiquités de Portobello Road, et le fameux pub fleuri The Churchill Arms — un des spots les plus photographiés de Londres, idéal pour ta série "façades". Tout est à quelques minutes à pied de l'hôtel.</p>
+        <div class="tl-transit"><span class="tube">🚇 Notting Hill Gate</span> — Central, Circle, District <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5142,-0.2039" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-photo">Photo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Fin d'après-midi</div>
+        <h4>Holland Park & le Kyoto Garden</h4>
+        <p>À 15 min à pied de Notting Hill : jardin japonais offert par la ville de Kyoto en 1991, cascade, érables et paons en liberté. Lumière douce en fin de journée, très calme en semaine.</p>
+        <div class="tl-transit"><span class="tube">🚇 Holland Park</span> — Central line, 7 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5044,-0.2038" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-parc">Parc</span><span class="tag-chip tag-photo">Photo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Soir</div>
+        <h4>Dîner + option jazz</h4>
+        <p>Dîner conseillé : <strong>Farmacy</strong> (Notting Hill, végétal et coloré) ou <strong>Berners Tavern</strong> (Soho, plafond doré spectaculaire). Si l'énergie suit après le vol, <strong>Ronnie Scott's</strong> à Soho propose un concert de jazz presque tous les soirs — programme à vérifier sur ronniescotts.co.uk.</p>
+        <div class="tl-transit"><span class="tube">🚇 Ronnie Scott's (Soho)</span> — Leicester Square (Northern/Piccadilly) ou Piccadilly Circus (Bakerloo/Piccadilly), 5-6 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5129,-0.1316" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-food">Food</span><span class="tag-chip tag-music">Musique</span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day-panel" id="day-2">
+    <div class="day-summary">
+      <div><div class="k">Météo probable</div><div class="v">~19-22°C</div></div>
+      <div><div class="k">Rythme</div><div class="v">Chargé — grande journée</div></div>
+      <div><div class="k">Thème du jour</div><div class="v">Photographie, art & musique live</div></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Matin</div>
+        <h4>The Photographers' Gallery + Soho Photography Quarter</h4>
+        <p>Une étape sur mesure pour une photographe de mariage : <strong>« Japanese Women Photographers, 1950s–Now »</strong> (27 artistes, jusqu'au 27 sept.), <strong>Sayuri Ichida</strong> (tirages sur le deuil et la sororité, gratuit), et en extérieur et gratuit, <strong>NINAGAWA Mika – Captive Blooms</strong> sur le Soho Photography Quarter juste devant la galerie.</p>
+        <div class="tl-transit"><span class="tube">🚇 Oxford Circus</span> — Central, Victoria, Bakerloo, 3 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5142,-0.1362" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-photo">Photo</span><span class="tag-chip tag-expo">Expo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Brunch</div>
+        <h4>Soho / Berwick Street</h4>
+        <p>Pause café-brunch dans les petites rues de Soho avant de traverser la ville vers la Tamise.</p>
+        <div class="tl-tags"><span class="tag-chip tag-food">Food</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Après-midi</div>
+        <h4>Tate Modern — Ana Mendieta</h4>
+        <p>Première grande rétrospective au Royaume-Uni depuis plus de 10 ans (films et sculptures, du 15 juillet au 17 janvier). La collection permanente reste gratuite. Continuez par le Millennium Bridge, avec la meilleure vue photo sur St Paul's Cathedral.</p>
+        <div class="tl-transit"><span class="tube">🚇 Southwark</span> — Jubilee line, 10 min à pied, ou <span class="tube">St Paul's</span> (Central) via Millennium Bridge <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5076,-0.0994" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-expo">Expo</span><span class="tag-chip tag-photo">Photo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Fin d'après-midi</div>
+        <h4>Borough Market</h4>
+        <p>À 10 min à pied le long de la Tamise. Marché alimentaire couvert le plus réputé de Londres — étals ouverts jusqu'à 17h/18h en semaine (fermé le lundi). Bon spot pour grignoter avant le concert plutôt que pour un vrai repas.</p>
+        <div class="tl-transit"><span class="tube">🚇 London Bridge</span> — Northern, Jubilee, 2 min à pied <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5055,-0.0910" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-food">Food</span><span class="tag-chip tag-photo">Photo</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">~16h30</div>
+        <h4>Direction The O2 (North Greenwich)</h4>
+        <p>Jubilee Line direct depuis London Bridge (~20-25 min). Dînez léger côté Greenwich/North Greenwich — de nombreux restaurants bordent l'esplanade de l'O2, pratique pour ne pas faire la queue après le concert.</p>
+        <div class="tl-transit"><span class="tube">🚇 North Greenwich</span> — Jubilee line, direct <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5030,0.0032" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span><span class="tag-chip tag-food">Food</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">Portes 18h00</div>
+        <h4>🎸 James Taylor en concert — The O2 Arena</h4>
+        <p>Ouverture des portes à 18h00, concert généralement autour de 20h00 pour environ 2h. Vérifiez l'horaire précis et l'éventuelle première partie sur le site officiel de l'O2 quelques jours avant.</p>
+        <div class="tl-transit"><span class="tube">🚇 North Greenwich</span> — Jubilee line, sortie directe sur l'esplanade <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5030,0.0032" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-music">Musique</span></div>
+      </div></div>
+    </div>
+
+    <div class="callout warn">
+      <div class="icon">⏰</div>
+      <div>
+        <h4>Point d'attention : la nuit du concert est très courte</h4>
+        <p>Le concert devrait se terminer vers 22h-22h30, et votre vol retour décolle à 7h30 le lendemain matin depuis Stansted. Comme votre hôtel (Pembridge Palace, Notting Hill) est à l'opposé de la ligne du Stansted Express, prendre le train impliquerait de retraverser tout Londres avec les bagages, alors que le métro ne circule plus la nuit — pas idéal après un concert. La solution la plus simple :</p>
+        <p><strong>Réservez à l'avance un taxi/VTC direct Pembridge Palace Hotel → Stansted</strong>, à prendre vers 3h30-4h00 du matin (trajet ~1h-1h15 par la M11, sans trafic à cette heure ; compter environ £100-130 selon le prestataire). Après le concert, retour à l'hôtel en taxi depuis l'O2 (~30-45 min), récupération des bagages préparés à l'avance, quelques heures de repos, puis départ pour l'aéroport. Réservez ce transfert de nuit en avance (Uber, Addison Lee, ou une compagnie de VTC aéroport) car les taxis de rue sont rares à cette heure.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day-panel" id="day-3">
+    <div class="day-summary">
+      <div><div class="k">Rythme</div><div class="v">Très matinal</div></div>
+      <div><div class="k">Thème du jour</div><div class="v">Retour</div></div>
+      <div><div class="k">Astuce</div><div class="v">Bagages prêts la veille</div></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">~22h30-23h</div>
+        <h4>Retour à l'hôtel depuis l'O2</h4>
+        <p>Taxi/VTC ou métro (Jubilee Line + correspondance) depuis North Greenwich jusqu'à Notting Hill/Bayswater, ~45 min. Récupérez vos bagages préparés à l'avance à l'hôtel.</p>
+        <div class="tl-transit"><span class="tube">🏨 Pembridge Palace Hotel</span> — 55 Princes Square, Notting Hill <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.5115,-0.1911" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">~3h30-4h00</div>
+        <h4>Taxi réservé Pembridge Palace Hotel → Stansted</h4>
+        <p>Trajet ~1h-1h15 via la M11 à cette heure creuse. Pour un vol à 7h30, viser une arrivée à l'aéroport vers 5h00-5h30, ce qui laisse une marge confortable pour l'enregistrement des bagages et la sécurité.</p>
+        <div class="tl-transit"><span class="tube">✈ Stansted Airport (STN)</span> <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.8860,0.2389" target="_blank">📍 Google Maps ↗</a></div>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+      <div class="tl-item"><div class="tl-card">
+        <div class="tl-time">7h30</div>
+        <h4>Décollage STN → MRS</h4>
+        <p>Retour à Marseille en fin de matinée. Bon dernier concert-souvenir dans les oreilles pour la route !</p>
+        <div class="tl-tags"><span class="tag-chip tag-transport">Transport</span></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONCERT FOCUS ============ -->
+<section id="concert">
+  <div class="section-head">
+    <div class="tag">Le clou du séjour</div>
+    <h2>James Taylor à The O2</h2>
+  </div>
+  <div class="concert-highlight">
+    <h3>James Taylor — The O2 Arena, North Greenwich</h3>
+    <div class="cta-row">
+      <div><div class="k">Date</div><div class="v">Jeudi 23 juillet 2026</div></div>
+      <div><div class="k">Portes</div><div class="v">18h00</div></div>
+      <div><div class="k">Métro</div><div class="v">North Greenwich (Jubilee Line)</div></div>
+      <div><div class="k">Billets & infos</div><div class="v"><a href="https://www.theo2.co.uk/events/detail/james-taylor" target="_blank" style="color:#f3e6c8;">theo2.co.uk</a></div></div>
+      <div><div class="k">Sur la carte</div><div class="v"><a href="https://www.google.com/maps/search/?api=1&query=51.5030,0.0032" target="_blank" style="color:#f3e6c8;">Google Maps ↗</a></div></div>
+    </div>
+  </div>
+  <p style="color:#4c4760;font-size:.92rem;">Cette date fait partie de la tournée européenne 2026 de James Taylor annoncée fin 2025. Pensez à repasser sur le site officiel de l'O2 ou de Ticketmaster/Eventim quelques jours avant pour confirmer l'horaire exact et une éventuelle première partie.</p>
+</section>
+
+<!-- ============ CARTE ============ -->
+<section id="carte">
+  <div class="section-head">
+    <div class="tag">Repères</div>
+    <h2>La carte du séjour</h2>
+    <p>Tous les lieux de l'itinéraire (grands repères) et des idées bonus (petits repères) — cliquez sur un point pour voir la ligne de métro à prendre et ouvrir l'endroit dans Google Maps.</p>
+  </div>
+  <div id="map"></div>
+  <div class="legend">
+    <span><i class="dot" style="background:#8a5a7a;"></i>Musique</span>
+    <span><i class="dot" style="background:#e2694b;"></i>Food</span>
+    <span><i class="dot" style="background:#22304a;"></i>Photo</span>
+    <span><i class="dot" style="background:#1f7a70;"></i>Expo</span>
+    <span><i class="dot" style="background:#4f8a4a;"></i>Parc / jardin</span>
+    <span><i class="dot" style="background:#8a8496;"></i>Transport</span>
+    <span style="margin-left:8px;">◆ grand = étape de l'itinéraire · ◆ petit = idée bonus</span>
+  </div>
+</section>
+
+<!-- ============ BONUS ============ -->
+<section id="bonus">
+  <div class="section-head">
+    <div class="tag">Pour aller plus loin</div>
+    <h2>Idées bonus, si vous avez un créneau libre</h2>
+    <p>Une réserve d'idées classées par thème — piochez selon l'énergie du moment. Filtrez par catégorie.</p>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">Tout</button>
+    <button class="filter-btn" data-filter="music">🎵 Musique</button>
+    <button class="filter-btn" data-filter="food">🍽 Food</button>
+    <button class="filter-btn" data-filter="photo">📷 Photo</button>
+    <button class="filter-btn" data-filter="expo">🖼 Expos</button>
+    <button class="filter-btn" data-filter="parc">🌳 Parcs & jardins</button>
+  </div>
+
+  <div class="grid" id="bonus-grid">
+    <!-- injected by JS -->
+  </div>
+</section>
+
+<!-- ============ INFOS PRATIQUES ============ -->
+<section id="pratique">
+  <div class="section-head">
+    <div class="tag">Bon à savoir</div>
+    <h2>Infos pratiques</h2>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>💳 Argent</h4>
+      <p>Livre sterling (£). Cartes sans contact acceptées quasi partout, y compris dans les transports (tap-in/tap-out directement avec votre carte bancaire sur le métro et les bus, pas besoin d'Oyster Card pour un court séjour).</p>
+    </div>
+    <div class="info-card">
+      <h4>🚇 Se déplacer dans Londres</h4>
+      <p>Métro (Underground) très dense. Paiement sans contact plafonné par jour (daily cap) — souvent moins cher qu'un billet à l'unité. Bus également en contactless.</p>
+    </div>
+    <div class="info-card">
+      <h4>🎟️ Oyster Card ou carte bancaire sans contact ?</h4>
+      <p>Une Oyster Card ne périme jamais : votre carte de 2016 devrait toujours fonctionner si vous la retrouvez, il suffit de la recharger dans une station ou via l'appli TfL Go (vérifiez d'abord le solde restant à une borne). Mais pour un séjour de 3 jours, le plus simple reste de tapper directement avec votre carte bancaire sans contact (ou téléphone) sur les portillons du métro, bus, DLR et Overground : mêmes tarifs et même plafond journalier que l'Oyster, sans avance de frais ni recharge. Pensez juste à vérifier que votre carte n'applique pas de frais de transaction à l'étranger. Seul bémol : le <strong>Stansted Express n'accepte ni Oyster ni contactless PAYG</strong> — son billet s'achète à part (voir ci-dessous).</p>
+    </div>
+    <div class="info-card">
+      <h4>🌦️ Météo fin juillet</h4>
+      <p>Généralement 18-24°C, éclaircies avec possibilité d'averses. Prévoir une petite veste imperméable légère et de bonnes chaussures pour marcher.</p>
+    </div>
+    <div class="info-card">
+      <h4>🔌 Électricité</h4>
+      <p>Prises type G (3 broches rectangulaires) — un adaptateur est nécessaire depuis la France.</p>
+    </div>
+    <div class="info-card">
+      <h4>📶 Téléphone</h4>
+      <p>Le Royaume-Uni n'est plus dans l'UE : vérifiez les frais d'itinérance (roaming) de votre forfait avant de partir, certains opérateurs français facturent la data au Royaume-Uni.</p>
+    </div>
+    <div class="info-card">
+      <h4>🎫 Réservations à prévoir</h4>
+      <p>Billets Stansted Express (aller + retour, moins cher en avance sur stanstedexpress.com ou appli), billets Sky Garden (gratuit mais réservation obligatoire en ligne), taxi de nuit pour le retour à l'aéroport (voir Jour 2/3), et si vous ajoutez Kew Gardens à votre séjour, billet à l'avance recommandé en haute saison.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section id="checklist">
+  <div class="section-head">
+    <div class="tag">Avant de partir</div>
+    <h2>Checklist rapide</h2>
+  </div>
+  <div class="checklist">
+    <ul id="checklist-items">
+      <li><label><input type="checkbox"><span>Billets d'avion + carte d'embarquement téléchargés</span></label></li>
+      <li><label><input type="checkbox"><span>Billets de concert James Taylor imprimés/téléphone chargé</span></label></li>
+      <li><label><input type="checkbox"><span>Réservation Stansted Express (aller + retour)</span></label></li>
+      <li><label><input type="checkbox"><span>Taxi de nuit réservé : Pembridge Palace Hotel → Stansted (~3h30-4h00)</span></label></li>
+      <li><label><input type="checkbox"><span>Hôtel confirmé — Pembridge Palace Hotel, Notting Hill</span></label></li>
+      <li><label><input type="checkbox"><span>Adaptateur secteur type G</span></label></li>
+      <li><label><input type="checkbox"><span>Carte bancaire prévenue / sans frais à l'étranger</span></label></li>
+      <li><label><input type="checkbox"><span>Batterie + cartes mémoire pour l'appareil photo</span></label></li>
+      <li><label><input type="checkbox"><span>Veste imperméable légère</span></label></li>
+      <li><label><input type="checkbox"><span>Billet Sky Garden réservé (si au programme)</span></label></li>
+      <li><label><input type="checkbox"><span>Forfait roaming UK vérifié</span></label></li>
+      <li><label><input type="checkbox"><span>Bagages cabine conformes Ryanair (poids/dimensions)</span></label></li>
+    </ul>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-label" id="progress-label">0 / 12 préparés</div>
+  </div>
+</section>
+
+<footer>
+  Fait avec ♥ pour votre séjour à Londres — dates et informations à reconfirmer sur les sites officiels avant le départ.<br>
+  <a href="https://www.theo2.co.uk/events/detail/james-taylor" target="_blank">The O2 – James Taylor</a> ·
+  <a href="https://www.stanstedexpress.com/" target="_blank">Stansted Express</a> ·
+  <a href="https://thephotographersgallery.org.uk/whats-on" target="_blank">The Photographers' Gallery</a> ·
+  <a href="https://www.tate.org.uk/whats-on" target="_blank">Tate Modern</a>
+</footer>
+
+<script>
+  /* ---------- Countdown ---------- */
+  try {
+    var target = new Date(2026, 6, 22, 9, 10, 0).getTime(); // 22 juillet 2026, 09h10, heure locale de l'appareil
+    var tick = function(){
+      var now = Date.now();
+      var diff = target - now;
+      if(diff < 0) diff = 0;
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-days').textContent = d;
+      document.getElementById('cd-hours').textContent = (h < 10 ? '0' : '') + h;
+      document.getElementById('cd-mins').textContent = (m < 10 ? '0' : '') + m;
+      document.getElementById('cd-secs').textContent = (s < 10 ? '0' : '') + s;
+    };
+    tick();
+    setInterval(tick, 1000);
+  } catch(e) { console.error('Countdown error:', e); }
+
+  /* ---------- Day tabs ---------- */
+  try {
+    var dayTabBtns = document.querySelectorAll('.day-tab-btn');
+    for (var i = 0; i < dayTabBtns.length; i++) {
+      dayTabBtns[i].addEventListener('click', function(){
+        var btn = this;
+        var allBtns = document.querySelectorAll('.day-tab-btn');
+        for (var j = 0; j < allBtns.length; j++) { allBtns[j].classList.remove('active'); }
+        var allPanels = document.querySelectorAll('.day-panel');
+        for (var k = 0; k < allPanels.length; k++) { allPanels[k].classList.remove('active'); }
+        btn.classList.add('active');
+        var target = document.getElementById('day-' + btn.getAttribute('data-day'));
+        if (target) { target.classList.add('active'); }
+      });
+    }
+  } catch(e) { console.error('Day tabs error:', e); }
+
+  /* ---------- Bonus data ---------- */
+  var gmaps = function(lat,lng){ return 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng; };
+
+  var bonusItems = [
+    {cat:'music', title:"Ronnie Scott's Jazz Club", place:'Soho', lat:51.5129, lng:-0.1316, station:"Leicester Square (Northern/Piccadilly) ou Piccadilly Circus (Bakerloo/Piccadilly), 5-6 min à pied", desc:"Club de jazz mythique depuis 1959, concerts quasi tous les soirs. Programme à vérifier en ligne."},
+    {cat:'music', title:"Columbia Road", place:'Bethnal Green', lat:51.5273, lng:-0.0722, station:"Hoxton (Overground), 10 min à pied", desc:"Marché aux fleurs coloré — uniquement le dimanche, à garder pour un futur séjour."},
+    {cat:'food', title:'Borough Market', place:'Southwark', lat:51.5055, lng:-0.0910, station:"London Bridge (Northern/Jubilee), 2 min à pied", desc:"Le grand marché gourmand de Londres, ouvert du mercredi au samedi.", skipPin:true},
+    {cat:'food', title:'Petersham Nurseries', place:'Richmond', lat:51.4519, lng:-0.2996, station:"Richmond (District/Overground/National Rail), puis ~25 min à pied le long de la Tamise ou bus 65", desc:"Restaurant dans une serre-jardin luxuriante, cadre romantique et très photogénique."},
+    {cat:'food', title:'Sketch', place:'Mayfair', lat:51.5142, lng:-0.1410, station:"Oxford Circus (Central/Victoria/Bakerloo), 5 min à pied", desc:"Décor rose pastel et toilettes futuristes so instagram, ambiance so British."},
+    {cat:'food', title:'Aqua Shard', place:'London Bridge', lat:51.5045, lng:-0.0865, station:"London Bridge (Northern/Jubilee), station juste en dessous", desc:"Vue panoramique depuis le 31e étage du Shard."},
+    {cat:'food', title:'The Churchill Arms', place:'Kensington', lat:51.5075, lng:-0.1975, station:"Notting Hill Gate (Central/Circle/District), 5 min à pied", desc:"Pub londonien classique, façade toujours couverte de fleurs."},
+    {cat:'photo', title:'Sky Garden', place:'Fenchurch Street', lat:51.5113, lng:-0.0836, station:"Monument (Circle/District), 3 min à pied", desc:"Jardin suspendu gratuit au sommet du « Walkie Talkie », vue à 360° — réservation en ligne obligatoire.", skipPin:true},
+    {cat:'photo', title:'Primrose Hill', place:'Camden', lat:51.5390, lng:-0.1608, station:"Chalk Farm (Northern), 10 min à pied", desc:"Vue dégagée sur le skyline londonien, superbe au coucher du soleil."},
+    {cat:'photo', title:'Little Venice', place:'Maida Vale', lat:51.5220, lng:-0.1830, station:"Warwick Avenue (Bakerloo), 3 min à pied", desc:"Péniches colorées le long du canal, ambiance très calme."},
+    {cat:'photo', title:'Millennium Bridge & St Paul’s', place:'City of London', lat:51.5095, lng:-0.0985, station:"St Paul's (Central), 5 min à pied", desc:"Vue emblématique entre Tate Modern et la cathédrale."},
+    {cat:'photo', title:'Shoreditch & Brick Lane', place:'East London', lat:51.5225, lng:-0.0708, station:"Shoreditch High Street (Overground), 5 min à pied", desc:"Street art géant, ruelles pleines de caractère, quartier très photogénique."},
+    {cat:'expo', title:'Ana Mendieta', place:'Tate Modern', lat:51.5076, lng:-0.0994, station:"Southwark (Jubilee) ou St Paul's (Central) via Millennium Bridge", desc:"Rétrospective majeure, du 15 juillet au 17 janvier.", skipPin:true},
+    {cat:'expo', title:"Japanese Women Photographers", place:"The Photographers' Gallery", lat:51.5142, lng:-0.1362, station:"Oxford Circus (Central/Victoria/Bakerloo), 3 min à pied", desc:"27 photographes des années 1950 à aujourd'hui, jusqu'au 27 septembre.", skipPin:true},
+    {cat:'expo', title:'NINAGAWA Mika – Captive Blooms', place:'Soho Photography Quarter', lat:51.5142, lng:-0.1362, station:"Oxford Circus (Central/Victoria/Bakerloo), 3 min à pied", desc:"Installation extérieure gratuite, visible à toute heure.", skipPin:true},
+    {cat:'expo', title:'Richard Dadd — Beyond Bedlam', place:'Royal Academy', lat:51.5090, lng:-0.1409, station:"Green Park (Piccadilly/Victoria/Jubilee), 3 min à pied", desc:"Ouvre le 25 juillet, juste après votre départ — à garder pour une prochaine visite."},
+    {cat:'parc', title:'Kew Gardens', place:'Richmond', lat:51.4787, lng:-0.2956, station:"Kew Gardens (District + Overground), 2 min à pied", desc:"Le plus grand jardin botanique du monde, serres victoriennes. Prévoir une demi-journée complète — à envisager si vous prolongez le séjour.", skipPin:true},
+    {cat:'parc', title:'Kyoto Garden, Holland Park', place:'Kensington', lat:51.5044, lng:-0.2038, station:"Holland Park (Central), 7 min à pied", desc:"Jardin japonais paisible avec paons, cascade et érables.", skipPin:true},
+    {cat:'parc', title:"St James's Park", place:'Westminster', lat:51.5017, lng:-0.1347, station:"St James's Park (Circle/District), sortie directe", desc:"Vue sur Buckingham Palace, pélicans et lac au cœur de la ville.", skipPin:true},
+    {cat:'parc', title:'Hampstead Heath & Pergola', place:'Hampstead', lat:51.5609, lng:-0.1629, station:"Hampstead Heath (Overground), 10 min à pied jusqu'à la Pergola", desc:"Pergola fleurie et vue sur tout Londres depuis Parliament Hill."},
+    {cat:'parc', title:'Regent’s Park', place:'Marylebone', lat:51.5313, lng:-0.1570, station:"Regent's Park (Bakerloo), 5 min à pied", desc:"Roseraie Queen Mary's Gardens, l'une des plus belles de la ville en été."}
+  ];
+
+  try {
+    var grid = document.getElementById('bonus-grid');
+    var tagLabel = {music:'Musique', food:'Food', photo:'Photo', expo:'Expo', parc:'Parc'};
+    var renderBonus = function(filter){
+      grid.innerHTML = '';
+      for (var i = 0; i < bonusItems.length; i++) {
+        var item = bonusItems[i];
+        if (filter !== 'all' && item.cat !== filter) { continue; }
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = '<span class="tag-chip tag-' + item.cat + '" style="align-self:flex-start;">' + tagLabel[item.cat] + '</span>' +
+          '<h4>' + item.title + '</h4>' +
+          '<div class="place">📍 ' + item.place + '</div>' +
+          '<p>' + item.desc + '</p>' +
+          '<div class="transit">🚇 <span class="tube">' + item.station + '</span></div>' +
+          '<a class="map-link" href="' + gmaps(item.lat, item.lng) + '" target="_blank">Voir sur Google Maps ↗</a>';
+        grid.appendChild(card);
+      }
+    };
+    renderBonus('all');
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    for (var fb = 0; fb < filterBtns.length; fb++) {
+      filterBtns[fb].addEventListener('click', function(){
+        var allFilterBtns = document.querySelectorAll('.filter-btn');
+        for (var x = 0; x < allFilterBtns.length; x++) { allFilterBtns[x].classList.remove('active'); }
+        this.classList.add('active');
+        renderBonus(this.getAttribute('data-filter'));
+      });
+    }
+  } catch(e) { console.error('Bonus grid error:', e); }
+
+  /* ---------- Checklist progress ---------- */
+  try {
+    var checkboxes = document.querySelectorAll('#checklist-items input[type=checkbox]');
+    var bar = document.getElementById('progress-bar');
+    var progLabel = document.getElementById('progress-label');
+    var updateProgress = function(){
+      var total = checkboxes.length;
+      var done = 0;
+      for (var i = 0; i < checkboxes.length; i++) { if (checkboxes[i].checked) { done++; } }
+      bar.style.width = (done / total * 100) + '%';
+      progLabel.textContent = done + ' / ' + total + ' préparés';
+    };
+    for (var cb = 0; cb < checkboxes.length; cb++) {
+      checkboxes[cb].addEventListener('change', updateProgress);
+    }
+    updateProgress();
+  } catch(e) { console.error('Checklist error:', e); }
+
+  /* ---------- Map (attend le chargement complet de la page, ne bloque jamais rien d'autre) ---------- */
+  var mapInitStarted = false;
+  function initMap(){
+    if (mapInitStarted) { return; }
+    mapInitStarted = true;
+    try {
+      var mapEl = document.getElementById('map');
+      if (typeof L === 'undefined') {
+        mapEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8a8496;font-size:.9rem;text-align:center;padding:20px;">Carte indisponible (connexion internet requise pour charger la carte).<br>Les liens Google Maps ci-dessus fonctionnent tout de même.</div>';
+        return;
+      }
+      var map = L.map('map', {scrollWheelZoom:false}).setView([51.508, -0.09], 11.3);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      var colors = {music:'#8a5a7a', food:'#e2694b', photo:'#22304a', expo:'#1f7a70', parc:'#4f8a4a', transport:'#8a8496'};
+      var makeIcon = function(color, big){
+        var size = big ? 22 : 15;
+        return L.divIcon({
+          className:'',
+          html:'<div style="background:' + color + ';width:' + size + 'px;height:' + size + 'px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:' + (big?3:2) + 'px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>',
+          iconSize:[size,size], iconAnchor:[size/2,size]
+        });
+      };
+      var mapPoints = [
+        {cat:'transport', name:'Liverpool Street Station', lat:51.5178, lng:-0.0823, station:'Central, Circle, H&C, Metropolitan', desc:'Arrivée du Stansted Express'},
+        {cat:'transport', name:'🏨 Pembridge Palace Hotel', lat:51.5115, lng:-0.1911, station:'Bayswater (Circle/District) ou Notting Hill Gate (Central/Circle/District)', desc:'55 Princes Square, Notting Hill — votre hébergement'},
+        {cat:'food', name:'Spitalfields Market', lat:51.5194, lng:-0.0759, station:'Liverpool Street, 5 min à pied', desc:'Déjeuner Jour 1'},
+        {cat:'photo', name:'Notting Hill / Portobello Rd', lat:51.5142, lng:-0.2039, station:'Notting Hill Gate (Central/Circle/District)', desc:'Balade photo Jour 1'},
+        {cat:'parc', name:'Holland Park — Kyoto Garden', lat:51.5044, lng:-0.2038, station:'Holland Park (Central)', desc:'Jardin japonais, Jour 1'},
+        {cat:'expo', name:"The Photographers' Gallery", lat:51.5142, lng:-0.1362, station:'Oxford Circus (Central/Victoria/Bakerloo)', desc:'Expos photo, Jour 2 matin'},
+        {cat:'expo', name:'Tate Modern', lat:51.5076, lng:-0.0994, station:'Southwark (Jubilee) ou St Paul’s (Central)', desc:'Ana Mendieta, Jour 2'},
+        {cat:'food', name:'Borough Market', lat:51.5055, lng:-0.0910, station:'London Bridge (Northern/Jubilee)', desc:'Marché gourmand, Jour 2'},
+        {cat:'music', name:'🎸 The O2 Arena', lat:51.5030, lng:0.0032, station:'North Greenwich (Jubilee, direct)', desc:'Concert James Taylor, 23 juillet'},
+        {cat:'transport', name:'✈ Stansted Airport', lat:51.8860, lng:0.2389, station:'Stansted Express depuis Liverpool Street', desc:'Aéroport (arrivée & départ)'}
+      ];
+      var i, p, item;
+      for (i = 0; i < mapPoints.length; i++) {
+        p = mapPoints[i];
+        L.marker([p.lat,p.lng], {icon:makeIcon(colors[p.cat], true)})
+          .addTo(map)
+          .bindPopup('<strong>' + p.name + '</strong><br>' + p.desc + '<br>🚇 ' + p.station + '<br><a href="' + gmaps(p.lat,p.lng) + '" target="_blank" style="color:#1f7a70;font-weight:700;">Voir sur Google Maps ↗</a>');
+      }
+      for (i = 0; i < bonusItems.length; i++) {
+        item = bonusItems[i];
+        if (item.skipPin) { continue; }
+        L.marker([item.lat,item.lng], {icon:makeIcon(colors[item.cat], false)})
+          .addTo(map)
+          .bindPopup('<strong>' + item.title + '</strong> <span style="color:#8a8496;font-weight:600;">(idée bonus)</span><br>📍 ' + item.place + '<br>🚇 ' + item.station + '<br><a href="' + gmaps(item.lat,item.lng) + '" target="_blank" style="color:#1f7a70;font-weight:700;">Voir sur Google Maps ↗</a>');
+      }
+    } catch(e) {
+      console.error('Map error:', e);
+      var mapEl2 = document.getElementById('map');
+      if (mapEl2) { mapEl2.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8a8496;font-size:.9rem;text-align:center;padding:20px;">Carte indisponible pour le moment. Les liens Google Maps ci-dessus fonctionnent tout de même.</div>'; }
+    }
+  }
+  if (document.readyState === 'complete') {
+    initMap();
+  } else {
+    window.addEventListener('load', initMap);
+    setTimeout(initMap, 4000); // filet de sécurité si l'événement 'load' est retardé par une ressource externe
+  }
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</body>
+</html>
